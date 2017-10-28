@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ICU - GRV Solutions</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static "icu/dark.css" %}">
+</head>
+<body>
+    <div class="upper_menu">
+        <div>
+            <div id="upper_title" ><br><H2>ICU - GRV Solutions</H2></div>
+            <div id="upper_tools" ><br><h3>Welcome, {% if profile %}<a href="{% url 'icu:update_profile' profile.id %}">{{ profile.first_name  }} {{ profile.last_name }}</a>{% else %}<a href="{% url 'icu:create_profile' %}">{{ request.user }}</a>{% endif %}</h3></div>
+        </div>
+        <! Hue Hue !>
+        <br>
+        <div class="horizontal_menu" style="width: 100%">
+            <ul class="horizontal_menu">
+                <li class="horizontal_menu"><a class="horizontal_menu" href="{% url 'icu:index' %}">Home</a></li>
+                <li class="horizontal_menu"><a class="horizontal_menu">About</a></li>
+                <li class="horizontal_menu"><a class="horizontal_menu" href="{% url 'icu:logout' %}">logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main_content">
+        <! Hue Hue !>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <table>
+        {% if devices_list %}
+            {% for device in devices_list %}
+                <tr><td><a href="{% url 'icu:device_detail' slug=device.slug %}">{{ device.device_name }}, {{ device.ip_adress }} - {{ device.slug }}</a></td><td><a href=""><button>Detele</button></a></td></tr>
+            {% endfor %}
+        {% else %}
+            <p>No devices are available.</p>
+        {% endif %}
+        </table>
+    <a href=""> <button>Create device</button> </a>
+    </div>
+</body>
+</html>

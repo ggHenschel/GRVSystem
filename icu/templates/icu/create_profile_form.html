@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ICU - GRV Solutions</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static "icu/dark.css" %}">
+</head>
+<body>
+    <div class="upper_menu">
+        <div>
+            <div id="upper_title" ><br><H2>ICU - GRV Solutions</H2></div>
+            <div id="upper_tools" ><br><h3>Welcome, {% if profile %}{{ profile.first_name  }} {{ profile.last_name }}{% else %}{{ request.user }}{% endif %}</h3></div>
+        </div>
+        <! Hue Hue !>
+        <br>
+        <div class="horizontal_menu" style="width: 100%">
+            <ul class="horizontal_menu">
+                <li class="horizontal_menu"><a class="horizontal_menu" href="{% url 'icu:index' %}">Home</a></li>
+                <li class="horizontal_menu"><a class="horizontal_menu">About</a></li>
+                <li class="horizontal_menu"><a class="horizontal_menu" href="{% url 'icu:logout' %}">logout</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="main_content">
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <form action="" method="post">{% csrf_token %}
+            <table>
+                <tr>
+                    <td><label>User:</label></td><td>{{ form.user }}</td>
+                </tr>
+                <tr>
+                    <td><label>First Name:</label></td><td>{{ form.first_name }}</td>
+                </tr>
+                <tr>
+                    <td><label>Last Name:</label></td><td>{{ form.last_name }}</td>
+                </tr>
+                <tr>
+                    <td><label>Phone:</label></td><td>{{ form.phone }}</td>
+                </tr>
+                <tr>
+                    <td><label>Email:</label></td><td>{{ form.email }}</td>
+                </tr>
+            </table>
+        <input type="submit" value="Save" />
+        </form>
+    </div>
+</body>
+</html>

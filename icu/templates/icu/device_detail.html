@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ICU - GRV Solutions</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static "icu/dark.css" %}">
+</head>
+<body>
+    <div class="upper_menu">
+        <div>
+            <div id="upper_title" ><br><H2>ICU - GRV Solutions</H2></div>
+            <div id="upper_tools" ><br><h3>Welcome, {% if profile %}<a href="{% url 'icu:update_profile' profile.id %}">{{ profile.first_name  }} {{ profile.last_name }}</a>{% else %}<a href="{% url 'icu:create_profile' %}">{{ request.user }}</a>{% endif %}</h3></div>
+        </div>
+        <! Hue Hue !>
+        <br>
+        <div class="horizontal_menu" style="width: 100%">
+            <ul class="horizontal_menu">
+                <li class="horizontal_menu"><a class="horizontal_menu" href="{% url 'icu:index' %}">Home</a></li>
+                <li class="horizontal_menu"><a class="horizontal_menu">About</a></li>
+                <li class="horizontal_menu"><a class="horizontal_menu" href="{% url 'icu:logout' %}">logout</a></li>
+            </ul>
+        </div>
+    </div>
+        <div>
+             <! Hue Hue !>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+        <div class="side_menu">
+                <ol>{% for de in all_devices %}
+                    <li><a href="{% url 'icu:device_detail' slug=de.slug %}" >{{ de.device_name }}</a></li>
+                {% endfor %}
+                </ol>
+        </div>
+        <div class="main_content">
+            <table>
+                <tr>
+                    <td>Device Name:</td><td>{{ device.device_name }}</td>
+                </tr>
+                <tr>
+                    <td>Device Model:</td><td>{{ device.device_model }} - {{ device.device_model.device_type }}</td>
+                </tr>
+                <tr>
+                    <td>Device MAC Address:</td><td>{{ device.mac_address }}</td>
+                </tr>
+                <tr>
+                    <td>Device IP Address</td><td>{{ device.ip_address }}</td>
+                </tr>
+            </table>
+            <button>Desativar</button><button>Deletar</button>
+        </div>
+        <div>
+            {% if device.device_model.device_type.type_name == 'Camera' %}
+               {{ device.get_camera }}
+            {% else %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
