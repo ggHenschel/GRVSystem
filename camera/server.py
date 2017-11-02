@@ -41,11 +41,10 @@ while True:
 
     frame = pickle.loads(frame_data)
 
-    frame, movement = detect.process_image(frame)
+    frame, movement = detect.detect(frame)
 
     # Remover quando mandar a imagem pro servidor
-    if frame != []:
-        cv2.imshow("Security Feed", frame)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
-            break
+    cv2.imshow("Security Feed", frame)
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
+        break
