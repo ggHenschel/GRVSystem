@@ -1,7 +1,7 @@
 {
 	"show_video": true,
     "use_email": false,
-    "email_address": ["your email address"],
+    "email_address": ["rafael.szt@gmail.com"],
 	"min_upload_seconds": 0.5,
 	"min_motion_frames": 8,
 	"camera_warmup_time": 10,

@@ -5,6 +5,8 @@ import cv2
 import pickle
 import struct
 from detect_movement import DetectMovement
+from utils import send_email
+import json
 
 HOST = ''
 PORT = 8089
@@ -42,6 +44,14 @@ while True:
     frame = pickle.loads(frame_data)
 
     frame, movement = detect.detect(frame)
+
+    if movement:
+        try:
+            open("mail.lock", "r")
+        except IOError:
+            open("mail.lock", "w+")
+            conf = json.load(open("conf.json"))
+            send_email(conf)
 
     # Remover quando mandar a imagem pro servidor
     cv2.imshow("Security Feed", frame)
