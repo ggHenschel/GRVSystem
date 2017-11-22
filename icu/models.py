@@ -46,12 +46,15 @@ class DeviceModel(models.Model):
         else:
             pass
 
+
+
 class Device(models.Model):
     device_model = models.ForeignKey(DeviceModel, on_delete=models.CASCADE, blank=False)
     mac_address = models.TextField(blank=False,unique=True,primary_key=True)
     ip_address = models.GenericIPAddressField(blank=False,unique=True)
     device_name = models.TextField(blank=True)
     slug = models.SlugField(blank=True)
+    activeted = False
 
     def __str__(self):
         return str(self.device_name)
@@ -62,3 +65,9 @@ class Device(models.Model):
 
     def get_camera(self):
         return self.device_model.get_camera(self.ip_address)
+
+    def active(self):
+        if not self.activeted:
+            print("Ativando Objeto:"+str(self)+str(self.activeted))
+            self.activeted = True
+            print("Objeto:" + str(self) +" Ativo "+ str(self.activeted))
