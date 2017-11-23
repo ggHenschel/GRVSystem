@@ -4,12 +4,19 @@ import socket
 import cv2
 import pickle
 import struct
+import sys
 from detect_movement import DetectMovement
 from utils import send_email
-import json
+import time
+
 
 HOST = ''
 PORT = 8089
+FIVE_MINUTES = 5 * 60
+
+if len(sys.argv) < 2:
+    print("[ERROR] No emails provided.")
+    sys.exit(1)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('[INFO] Socket created')
@@ -25,9 +32,9 @@ conn, addr = s.accept()
 data = bytearray()
 payload_size = struct.calcsize("L")
 
-detect = DetectMovement()
 
-while True:
+def get_frame_from_camera():
+    global data
     while len(data) < payload_size:
         data += conn.recv(4096)
 
@@ -43,15 +50,29 @@ while True:
 
     frame = pickle.loads(frame_data)
 
+    return frame
+
+
+detect = DetectMovement()
+timeLastEmailSent = 0
+
+emails = []
+for arg in sys.argv[1:]:
+    emails.append(arg)
+
+while True:
+    frame = get_frame_from_camera()
     frame, movement = detect.detect(frame)
 
     if movement:
-        try:
-            open("mail.lock", "r")
-        except IOError:
-            open("mail.lock", "w+")
-            conf = json.load(open("conf.json"))
-            send_email(conf)
+        # Epoch atual
+        cur_min = time.time()
+
+        # Verifica se passou 5 minutos do ultimo alerta
+        if timeLastEmailSent + FIVE_MINUTES < cur_min:
+            print("[INFO] Time of breach: " + time.ctime())
+            timeLastEmailSent = cur_min
+            send_email(emails)
 
     # Remover quando mandar a imagem pro servidor
     cv2.imshow("Security Feed", frame)
