@@ -5,8 +5,8 @@ import cv2
 import pickle
 import struct
 import sys
-from detect_movement import DetectMovement
-from utils import send_email
+#from detect_movement import DetectMovement
+#from utils import send_email
 import time
 from camera.detect_movement import DetectMovement
 from camera.utils import send_email
@@ -14,7 +14,7 @@ import json
 
 
 def get_frame_from_camera():
-    global data
+    global data, payload_size
     while len(data) < payload_size:
         data += conn.recv(4096)
 
@@ -49,17 +49,16 @@ def server_run():
     s.listen(10)
     print('[INFO] Socket now listening')
 
-    conn, addr = s.accept()
 
+
+    global data, payload_size, conn, addr
+    conn, addr = s.accept()
     data = bytearray()
     payload_size = struct.calcsize("L")
     detect = DetectMovement()
     
     timeLastEmailSent = 0
 
-    emails = []
-    for arg in sys.argv[1:]:
-        emails.append(arg)
 
     while True:
         frame = get_frame_from_camera()
@@ -73,7 +72,7 @@ def server_run():
             if timeLastEmailSent + FIVE_MINUTES < cur_min:
                 print("[INFO] Time of breach: " + time.ctime())
                 timeLastEmailSent = cur_min
-                send_email(emails)
+                send_email()
 
         # Remover quando mandar a imagem pro servidor
         cv2.imshow("Security Feed", frame)

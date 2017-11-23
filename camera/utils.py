@@ -7,20 +7,21 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
+from icu.models import User
 
 
-def send_email(emails):
+def send_email():
     try:
-        cred = json.load(open("cred.json", "r"))
+        cred = json.load(open("camera/cred.json", "r"))
     except IOError:
         print("[ERROR] Credentials file not found. No mail sent.")
         return
-
+    users = User.objects.all()
     fromaddr = "server.eng.soft@gmail.com"
-    for email_address in emails:
-        toaddrs = email_address
-        print("[INFO] Emailing to {}".format(email_address))
-        text = 'Hey Someone in Your House!!!!'
+    for user in users:
+        toaddrs = user.email
+        print("[INFO] Emailing to {}".format(user.email))
+        text = 'Hey'+user.first_name+', Someone in Your House!!!!'
         subject = 'Security Alert!!'
         message = 'Subject: {}\n\n{}'.format(subject, text)
 

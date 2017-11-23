@@ -52,12 +52,6 @@
             </table>
             <button>Desativar</button><button>Deletar</button>
         </div>
-        <div>
-            {% if device.device_model.device_type.type_name == 'Camera' %}
-               {{ device.get_camera }}
-            {% else %}
-            {% endif %}
-        </div>
     </div>
 </body>
 </html>

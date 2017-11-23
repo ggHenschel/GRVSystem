@@ -40,6 +40,10 @@ class DeviceModel(models.Model):
 
 
     def active(self,ip):
+        users = User.objects.all()
+        emails = []
+        for user in users:
+            emails.append(user.email)
         # POG
         if self.device_type.get_camera():
             self.th_server = thr.Thread(target=server.server_run)
