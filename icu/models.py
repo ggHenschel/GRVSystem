@@ -4,7 +4,8 @@ from django.template.defaultfilters import slugify
 from django.http import response
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from . import camera
+from camera import client, server
+import threading as thr
 
 # Create your models here.
 class Profile(models.Model):
@@ -37,15 +38,14 @@ class DeviceModel(models.Model):
     def __str__(self):
         return str(self.device_model)
 
-    #POG
-    def get_camera(self,ip):
-        #POG
-        if self.device_type.get_camera():
-            cam = camera.Camera(ip)
-            return response.StreamingHttpResponse(response.HttpResponse(cam.gen()))
-        else:
-            pass
 
+    def active(self,ip):
+        # POG
+        if self.device_type.get_camera():
+            self.th_server = thr.Thread(target=server.server_run)
+            self.th_server.start()
+            self.th_camera = thr.Thread(target=client.camera)
+            self.th_camera.start()
 
 
 class Device(models.Model):
@@ -63,11 +63,9 @@ class Device(models.Model):
         self.slug = slugify(self.mac_address)
         super(Device,self).save(**kwargs)
 
-    def get_camera(self):
-        return self.device_model.get_camera(self.ip_address)
-
     def active(self):
         if not self.activeted:
             print("Ativando Objeto:"+str(self)+str(self.activeted))
             self.activeted = True
+            self.device_model.active(self.ip_address)
             print("Objeto:" + str(self) +" Ativo "+ str(self.activeted))

@@ -3,18 +3,19 @@
 import socket
 import pickle
 import struct
-from camera_feed import VideoCamera
+from camera.camera_feed import VideoCamera
 
-HOST = 'localhost'
-PORT = 8089
+def camera():
+    HOST = 'localhost'
+    PORT = 8089
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((HOST, PORT))
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((HOST, PORT))
 
-camera = VideoCamera()
+    camera = VideoCamera()
 
-while True:
-    frame = camera.get_frame()
-    data = pickle.dumps(frame)
+    while True:
+        frame = camera.get_frame()
+        data = pickle.dumps(frame)
 
-    client.sendall((struct.pack("L", len(data)) + data))
+        client.sendall((struct.pack("L", len(data)) + data))
