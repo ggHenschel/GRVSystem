@@ -1,7 +1,5 @@
 import json
 import smtplib
-import uuid
-import os
 import glob
 
 from os.path import basename
@@ -11,7 +9,7 @@ from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 
 
-def send_email(conf):
+def send_email(emails):
     try:
         cred = json.load(open("cred.json", "r"))
     except IOError:
@@ -19,7 +17,7 @@ def send_email(conf):
         return
 
     fromaddr = "server.eng.soft@gmail.com"
-    for email_address in conf['email_address']:
+    for email_address in emails:
         toaddrs = email_address
         print("[INFO] Emailing to {}".format(email_address))
         text = 'Hey Someone in Your House!!!!'
@@ -55,20 +53,3 @@ def send_email(conf):
         server.login(username, password)
         server.sendmail(fromaddr, toaddrs, msg.as_string())
         server.quit()
-
-
-def send_mail(conf, files=None,
-              ):
-    assert isinstance(send_to, list)
-
-    msg = MIMEMultipart()
-    msg['From'] = send_from
-    msg['To'] = COMMASPACE.join(send_to)
-    msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = subject
-
-    msg.attach(MIMEText(text))
-
-    smtp = smtplib.SMTP(server)
-    smtp.sendmail(send_from, send_to, msg.as_string())
-    smtp.close()
