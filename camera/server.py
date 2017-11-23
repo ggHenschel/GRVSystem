@@ -8,29 +8,9 @@ import sys
 from detect_movement import DetectMovement
 from utils import send_email
 import time
-
-
-HOST = ''
-PORT = 8089
-FIVE_MINUTES = 5 * 60
-
-if len(sys.argv) < 2:
-    print("[ERROR] No emails provided.")
-    sys.exit(1)
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print('[INFO] Socket created')
-
-s.bind((HOST, PORT))
-print('[INFO] Socket bind complete')
-
-s.listen(10)
-print('[INFO] Socket now listening')
-
-conn, addr = s.accept()
-
-data = bytearray()
-payload_size = struct.calcsize("L")
+from camera.detect_movement import DetectMovement
+from camera.utils import send_email
+import json
 
 
 def get_frame_from_camera():
@@ -49,33 +29,54 @@ def get_frame_from_camera():
     data = data[msg_size:]
 
     frame = pickle.loads(frame_data)
-
     return frame
 
+  
+def server_run():
+    HOST = ''
+    PORT = 8089
+    FIVE_MINUTES = 5 * 60
+    
+    if len(sys.argv) < 2:
+        print("[ERROR] No emails provided.")
 
-detect = DetectMovement()
-timeLastEmailSent = 0
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print('[INFO] Socket created')
 
-emails = []
-for arg in sys.argv[1:]:
-    emails.append(arg)
+    s.bind((HOST, PORT))
+    print('[INFO] Socket bind complete')
 
-while True:
-    frame = get_frame_from_camera()
-    frame, movement = detect.detect(frame)
+    s.listen(10)
+    print('[INFO] Socket now listening')
 
-    if movement:
-        # Epoch atual
-        cur_min = time.time()
+    conn, addr = s.accept()
 
-        # Verifica se passou 5 minutos do ultimo alerta
-        if timeLastEmailSent + FIVE_MINUTES < cur_min:
-            print("[INFO] Time of breach: " + time.ctime())
-            timeLastEmailSent = cur_min
-            send_email(emails)
+    data = bytearray()
+    payload_size = struct.calcsize("L")
+    detect = DetectMovement()
+    
+    timeLastEmailSent = 0
 
-    # Remover quando mandar a imagem pro servidor
-    cv2.imshow("Security Feed", frame)
-    key = cv2.waitKey(1) & 0xFF
-    if key == ord("q"):
-        break
+    emails = []
+    for arg in sys.argv[1:]:
+        emails.append(arg)
+
+    while True:
+        frame = get_frame_from_camera()
+        frame, movement = detect.detect(frame)
+
+        if movement:
+            # Epoch atual
+            cur_min = time.time()
+
+            # Verifica se passou 5 minutos do ultimo alerta
+            if timeLastEmailSent + FIVE_MINUTES < cur_min:
+                print("[INFO] Time of breach: " + time.ctime())
+                timeLastEmailSent = cur_min
+                send_email(emails)
+
+        # Remover quando mandar a imagem pro servidor
+        cv2.imshow("Security Feed", frame)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break

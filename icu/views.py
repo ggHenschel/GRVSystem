@@ -21,6 +21,8 @@ def login_user(request):
             if user.is_active:
                 login(request, user)
                 return HttpResponseRedirect(reverse('icu:index'))
+        request.error = True
+        print("Login Error")
     return render(request, 'icu/login_form.html')
 
 class DevicesView(LoginRequiredMixin, ListView):

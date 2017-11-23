@@ -11,7 +11,7 @@ class DetectMovement(object):
     def __init__(self):
         super().__init__()
 
-        self.conf = json.load(open("conf.json"))
+        self.conf = json.load(open("camera/conf.json"))
         self.avg = None
         self.lastUploaded = datetime.datetime.now()
         self.motionCounter = 0
